@@ -89,9 +89,8 @@ class AdaBelief(Optimizer):
                 state = self.state[p]
 
                 # apply gradient
-                if not weight_decouple:
-                    if weight_decay != 0:
-                        grad.add_(p.data, alpha=weight_decay)
+                if not weight_decouple and weight_decay != 0:
+                    grad.add_(p.data, alpha=weight_decay)
 
                 # State initialization
                 if len(state) == 0:
@@ -132,14 +131,14 @@ class AdaBelief(Optimizer):
 
                 if clip_step is None:
                     # apply weight_decay
-                    if weight_decouple:
+                    if weight_decouple and weight_decay != 0:
                         rate = [1, lr][fixed_decay] * weight_decay
                         p.data.mul_(1.0 - rate)
                     p.data.addcdiv_(exp_avg, denom, value=-lr / bias_correction1)
                 else:
                     step = (-lr / bias_correction1) * (exp_avg / denom)
                     # apply weight_decay
-                    if weight_decouple:
+                    if weight_decouple and weight_decay != 0:
                         rate = [1, lr][fixed_decay] * weight_decay
                         step.add_(p.data, alpha=-rate)
                     norm += step.norm(p=norm_ord).cpu().numpy() ** norm_ord
