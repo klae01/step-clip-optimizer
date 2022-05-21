@@ -141,7 +141,7 @@ class AdaBelief(Optimizer):
                     if weight_decouple and weight_decay != 0:
                         rate = [1, lr][fixed_decay] * weight_decay
                         step.add_(p.data, alpha=-rate)
-                    norm += step.norm(p=norm_ord).cpu().numpy() ** norm_ord
+                    norm += step.norm(p=norm_ord).cpu().item() ** norm_ord
                     steps.append(step)
 
             step_group.append(None if len(steps) == 0 else steps)
